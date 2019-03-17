@@ -1,6 +1,7 @@
 class GameController {
-    constructor(player) {
+    constructor(player, enemies) {
         this.player = player;
+        this.enemies = enemies;
 
         // Game State
         this.isPaused = false;
@@ -13,11 +14,16 @@ class GameController {
         // Move to game params?
         this.distMoveX = ctx.canvas.width / this.blockCountX;
         this.distMoveY = (ctx.canvas.height / this.blockCountY) - 18;
+
+        // Score Fields
+        this.scoreBoard = document.getElementById('score');
+        this.score = 0;
     }
 
     handleInput(input) {
         if (this.isPaused != true) {
             let pos = this.checkNextMove();
+            // this.collisionCheck(enemy);
             switch (input) {
                 case 'up':
                     if (pos.yUp) {
@@ -44,6 +50,25 @@ class GameController {
             }
         }
 
+    }
+
+    update(dt) {
+        this.winCheck();
+        this.enemies.forEach(element => {
+            this.collisionCheck(element);
+            // element.update(dt);
+            if (element.x > this.gameAreaWidth || element.x < -5) {
+                element.reset();
+            }
+            element.moveRight(10 * dt);
+        });
+    }
+
+    render() {
+        this.player.render();
+        this.enemies.forEach(function (enemy) {
+            enemy.render();
+        })
     }
 
     checkNextMove(pos = this.player.getCurrentPosition()) {
@@ -75,10 +100,40 @@ class GameController {
         if (pos.y) {
             if ((pos.y + this.distMoveY) < ctx.canvas.height - (2 * this.distMoveY)) {
                 returnObject.yDown = true;
-            }
+            } ``
         }
 
         return returnObject;
+    }
+
+    winCheck() {
+        if (this.player.y < 0) {
+            this.isPaused = true;
+            this.updateScore(10);
+            this.reset();
+        }
+    }
+
+    collisionCheck(item, player = this.player) {
+        // TODO: make arguments dynamic
+        let itemMinX = item.x - 10;
+        let itemMaxX = item.x + 80;
+        let itemMinY = item.y - 10;
+        let itemMaxY = item.y + 80;
+        if (player.x < itemMaxX && player.x > itemMinX && player.y < itemMaxY && player.y > itemMinY) {
+            this.updateScore(-10);
+            this.reset();
+        }
+    }
+
+    updateScore(num) {
+        this.score += num;
+        this.scoreBoard.innerText = this.score;
+    }
+
+    reset() {
+        this.player.reset();
+        this.isPaused = false;
     }
 }
 
@@ -88,7 +143,7 @@ let allEnemies = [
     new DynamicGamePiece('images/enemy-bug.png', 0, 144),
     new DynamicGamePiece('images/enemy-bug.png', 0, 224, 6)
 ]
-let gameController = new GameController(player);
+let gameController = new GameController(player, allEnemies);
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.

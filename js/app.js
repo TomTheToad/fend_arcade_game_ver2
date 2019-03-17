@@ -20,11 +20,6 @@ class DynamicGamePiece extends GamePiece {
         this.xMoveModifier = xMoveModifier;
         this.originX = x;
         this.originY = y;
-        // this.distMoveX = distMoveX;
-        // Use offset here?
-        // TODO: Should the GC handle all movement logic?
-        // this.distMoveY = distMoveY - 18;
-        // TODO: add area of effect
     }
 
     // TODO: keep howFar? Allow for easily changing move distance in an instance.
