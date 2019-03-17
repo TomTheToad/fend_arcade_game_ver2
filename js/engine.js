@@ -1,3 +1,11 @@
+// This file was provided by Udacity.
+// It has been modified in this version to:
+// A) Prevent the default BG being rendered. It's covered over anway
+// B) Call the game controller to render.
+// Note: I had previously removed this file / and integrated the basics in an engine class.
+// I attempt to use solid OOP with class files and no global calls in favor of STATIC methods.
+// It only kind of worked. Meaning it didn't. Please see README.md for possible alternatives.
+
 /* Engine.js
  * This file provides the game loop functionality (update entities and render),
  * draws the initial game board on the screen, and then calls the update and
@@ -104,41 +112,9 @@ var Engine = (function (global) {
      * they are just drawing the entire screen over and over.
      */
     function render() {
-        /* This array holds the relative URL to the image used
-         * for that particular row of the game level.
-         */
-        var rowImages = [
-            'images/water-block.png',   // Top row is water
-            'images/stone-block.png',   // Row 1 of 3 of stone
-            'images/stone-block.png',   // Row 2 of 3 of stone
-            'images/stone-block.png',   // Row 3 of 3 of stone
-            'images/grass-block.png',   // Row 1 of 2 of grass
-            'images/grass-block.png'    // Row 2 of 2 of grass
-        ],
-            numRows = 6,
-            numCols = 5,
-            row, col;
 
         // Before drawing, clear existing canvas
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        /* Loop through the number of rows and columns we've defined above
-         * and, using the rowImages array, draw the correct image for that
-         * portion of the "grid"
-         */
-        // for (row = 0; row < numRows; row++) {
-        //     for (col = 0; col < numCols; col++) {
-        //         /* The drawImage function of the canvas' context element
-        //          * requires 3 parameters: the image to draw, the x coordinate
-        //          * to start drawing and the y coordinate to start drawing.
-        //          * We're using our Resources helpers to refer to our images
-        //          * so that we get the benefits of caching these images, since
-        //          * we're using them over and over.
-        //          */
-        //         ctx.drawImage(Resources.get(rowImages[row]), col * 101, row * 83);
-        //     }
-        // }
-
         renderEntities();
     }
 
@@ -170,6 +146,7 @@ var Engine = (function (global) {
      * draw our game level. Then set init as the callback method, so that when
      * all of these images are properly loaded our game will start.
      */
+    // TODO: move this to GameController to load based on level design.
     Resources.load([
         'images/stone-block.png',
         'images/water-block.png',

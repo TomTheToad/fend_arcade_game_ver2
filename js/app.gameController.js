@@ -1,3 +1,16 @@
+// app.gameController.js
+// Definition for GameController class
+// followed by initialization of Player, Enemies, BlockGrid, and gameController
+// Included eventlistener logic for necessary keys to operate game at bottom.
+// This file is where most of the game logic should be kept.
+
+// Model for GameController class
+// Could be moved to models files but kept here to make it easier for code review
+// and because it contains most of the game logic.
+// Takes three arguments.
+// player: the player game piece
+// enemies: an array of enemy game pieces
+// blockGrid: the level1 board design. This will eventually take an array of level objects.
 class GameController {
     constructor(player, enemies, blockGrid = null) {
         this.player = player;
@@ -11,8 +24,7 @@ class GameController {
         this.blockCountX = 5;
         this.blockCountY = 6;
 
-        // TODO: include graphic offset
-        // Move to game params?
+        // TODO: Remove magic number in favor of offset
         this.distMoveX = ctx.canvas.width / this.blockCountX;
         this.distMoveY = (ctx.canvas.height / this.blockCountY) - 18;
 
@@ -21,8 +33,13 @@ class GameController {
         this.score = 0;
     }
 
+    // Method the handles keyboard input
+    // Takes one argument for keyboard event.
     handleInput(input) {
+        // Prevents movement if game is paused
         if (this.isPaused == false) {
+            // Calls on checkNextMove() method to check for legal moves.
+            // All cases implement the checkMoveBlocked method to check for nonPlayable board spaces.
             let pos = this.checkNextMove();
             switch (input) {
                 case 'up':
@@ -56,6 +73,9 @@ class GameController {
         }
     }
 
+    // A macro update method call
+    // Calls methods to checks to see if a "win" or collision condition exists
+    // Takes single argument for time differential used with animation
     update(dt) {
         if (this.isPaused != true) {
             this.winCheck();
@@ -69,6 +89,8 @@ class GameController {
         }
     }
 
+    // A macro render call
+    // Calls render methods for game grid, player, and all enemies.
     render() {
         if (this.blockGrid != null) {
             this.blockGrid.forEach(block => block.render());
@@ -77,6 +99,9 @@ class GameController {
         this.enemies.forEach(enemy => enemy.render());
     }
 
+    // Method that current position from player
+    // and checks against possible moves.
+    // Takes one argument: pos >> player position object {x: x, y: y}
     checkNextMove(pos = this.player.getCurrentPosition()) {
         let returnObject = {
             xLeft: false,
@@ -113,6 +138,10 @@ class GameController {
     }
 
     // TODO: refactor / combine with collision check?
+    // TODO: can magic numbers be made dynamic? Maybe in block / block grid class
+    // Method to check postMove for an nonplayable block and reset players position if necessary.
+    // Takes one argument: player instance so player can be commanded to return to last position
+    // if position if found to be illegal.
     checkMoveBlocked(player = this.player) {
         this.blockGrid.forEach(block => {
             let pos = player.getCurrentPosition();
@@ -120,9 +149,7 @@ class GameController {
                 let xMin = block.x - 5;
                 let xMax = block.x + 50;
                 let yMin = block.y - 30;
-                // TODO: fix code smell
                 let yMax = block.y + 50;
-                // console.log(`x: ${pos.x}, y: ${pos.y}, xMin: ${xMin}, xMax: ${xMax}, yMin: ${yMin}, yMax: ${yMax}`);
                 if ((pos.x > xMin) && (pos.x < xMax) && (pos.y > yMin) && (pos.y < yMax)) {
                     player.returnToLastPos();
                 }
@@ -130,6 +157,8 @@ class GameController {
         });
     }
 
+    // Checks player position for win condition
+    // Calls class / game reset method if condition met.
     winCheck() {
         if (this.player.y < 0) {
             this.isPaused = true;
@@ -140,6 +169,9 @@ class GameController {
 
     // TODO: Why not use this for blocks as well?
     // Use arguments for diff min, max, and callback?
+    // Method checks for collision between player and enemy item.
+    // Takes argument for item (instance of enemy) and player.
+    // Uses player arguement to reset player position to origin if collision detected.
     collisionCheck(item, player = this.player) {
         // TODO: make arguments dynamic
         let itemMinX = item.x - 50;
@@ -152,26 +184,37 @@ class GameController {
         }
     }
 
+    // Updates score field
+    // Takes single argument for change to score.
     updateScore(num) {
         this.score += num;
         this.scoreBoard.innerText = this.score;
     }
 
+    // Resets the player position and unpauses the game if paused.
     reset() {
         this.player.reset();
         this.isPaused = false;
     }
 }
 
+// Create the default player instance.
 let player = new DynamicGamePiece('images/char-boy.png', 200, 388)
+
+// Create an array of default enemies.
 let allEnemies = [
     new DynamicGamePiece('images/enemy-bug.png', 0, 64, 4),
     new DynamicGamePiece('images/enemy-bug.png', 0, 144),
     new DynamicGamePiece('images/enemy-bug.png', 0, 224, 6)
 ]
 
+// Create an intance of gameBlockGrid to build the new game grid.
 let gameBlockGrid = new GameBlockGrid(ctx.canvas.width, ctx.canvas.height, 5, 6, -18, 0);
+
+// Custom build the new game board based off of level1 array in app.levels.js
 let allBlocks = gameBlockGrid.buildCustomBlockGrid(level1);
+
+// Instantiate the gameController and build the game.
 let gameController = new GameController(player, allEnemies, allBlocks);
 
 // This listens for key presses and sends the keys to your

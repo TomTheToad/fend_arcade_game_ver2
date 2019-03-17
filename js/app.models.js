@@ -1,3 +1,10 @@
+// app.model.js (previously app.js)
+// A file location for model classes used in the game.
+
+// GamePiece class
+// Base class for all game pieces.
+// take three arguments required by html5 canvas
+// sprite (image in this case) and x and y coordinates.
 class GamePiece {
     constructor(image, x, y) {
         this.image = image;
@@ -5,16 +12,22 @@ class GamePiece {
         this.y = y;
     }
 
-    render(dt) {
+    // Use ctx, component of canvas, globally declared by engine.js
+    // Draws to canvas
+    render() {
         ctx.drawImage(Resources.get(this.image), this.x, this.y)
     }
 
+    // TODO: Delete this?
+    // This may have been rendered useless by update in app.gameController
     update(dt) {
 
     }
 }
 
-// TODO: create a default bg image
+// GameBlock class
+// Class for a single game block used to build the background,
+// or board, depending on which build is being used.
 class GameBlock extends GamePiece {
     constructor(col, row, x, y, bgImage = "images/stone-block.png", isPlayable = true) {
         super(bgImage, x, y);
@@ -23,9 +36,18 @@ class GameBlock extends GamePiece {
         this.isPlayable = isPlayable;
     }
 }
-// GameBlockGrid Class
-// Create the game grid and define locations
-// Do not extend GameBlock
+
+// GameBlockGrid class
+// A more robust board building class used to assemble arrays of game blocks.
+// arguments:
+//  widthInPixels: board width in pixels
+//  heightInPixels: board height in pixels
+//  blockCountX: number of blocks per row
+//  blockCountY: number of rows
+//  YOffSet: used to adjust for block bg images having nonplayable area for asthetic
+//  XoffSet: same as above yet not yet utilized in this version of the game.
+// Note: This class is utilized in this version however it was built for a bg scrolling version
+// which will hopefully be added here eventually.
 class GameBlockGrid {
     // Constructor
     // TODO: review variable names
@@ -45,11 +67,13 @@ class GameBlockGrid {
         this.grid = [];
     }
 
+    // Getter for game grid.
     getGameGrid() {
         return this.buildBlockGrid();
     }
 
-    // Build game grid
+    // Quick build a game grid / board based on the default bg image.
+    // Returns the generated grid for use which GameController
     buildBlockGrid() {
         this.grid = [];
         for (let y = 0; y < this.blockCountY; y++) {
@@ -65,6 +89,11 @@ class GameBlockGrid {
         return this.grid
     }
 
+    // Build game grid / board based off a simple array (see app.levels.js)
+    // Takes 2 arguments:
+    //  buildImageArray: an array of images which represent game spaces
+    //  unplayableImage: a convenience method to set an area the player cannot move to
+    // Returns the generated grid for use which GameController
     buildCustomBlockGrid(blockImageArray, unplayableImage = 'images/water-block.png') {
         this.grid = [];
         blockImageArray;
@@ -87,6 +116,12 @@ class GameBlockGrid {
     }
 }
 
+// DynamicGamePiece class 
+// Extends the base class GamePiece
+// Adds movement and reset functionality.
+// Takes 4 arguments: 3 free GamePiece
+// Adds argument xMoveModifier to set an items default speed.
+// NOTE: This class could be broken up into Player and Enemy if required.
 class DynamicGamePiece extends GamePiece {
     constructor(image, x, y, xMoveModifier = 1) {
         super(image, x, y)
@@ -97,6 +132,9 @@ class DynamicGamePiece extends GamePiece {
     }
 
     // TODO: keep howFar? Allow for easily changing move distance in an instance.
+    // Move<up, down, right, left> 
+    // Moves the game piece in the given directions and calls method to set previous position.
+    // Takes one argument. How far to move. Presumably in pixels.
     moveUp(howFar) {
         this.setLastPos();
         this.y -= howFar;
@@ -130,10 +168,14 @@ class DynamicGamePiece extends GamePiece {
         this.y = this.originY;
     }
 
+    // Set previous position for rapid return
+    // Used when trying to move to an illegal space.
     setLastPos() {
         this.previousPos = this.getCurrentPosition();
     }
 
+    // Returns player to last position.
+    // Used when trying to move to an illegal space.
     returnToLastPos() {
         if (this.previousPos) {
             this.x = this.previousPos.x
