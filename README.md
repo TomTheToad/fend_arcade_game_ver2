@@ -26,6 +26,7 @@ This app was tested using Version 73.0.3683.75 of Google Chrome.
 <a name="file_structure"/>
 ## File Structure
 
+```
 .
 ├── css                             # associated styleshees created by Udacity
 ├── images                          # default images for the game created by Udacity
@@ -39,6 +40,7 @@ This app was tested using Version 73.0.3683.75 of Google Chrome.
 |
 ├── index.html                      # html and starting point for the application
 └── README.md                       # this read me file
+```
 
 
 <a name="why"/>
