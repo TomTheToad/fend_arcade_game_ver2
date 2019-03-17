@@ -11,6 +11,7 @@
 
 
 <a name="intro"/>
+
 ## Introduction
 
 This is my version of the frogger style classic arcade game done for Udacity's Front End Nanodegree Program.
@@ -18,6 +19,7 @@ This is not a production ready project but was used to explore javascript classe
 
 
 <a name="instructions"/>
+
 ## Instructions
 
 This is a browser based game that should work in most, if not all, modern day browsers that support es6.
@@ -26,6 +28,7 @@ This app was tested using Version 73.0.3683.75 of Google Chrome.
 
 
 <a name="file_structure"/>
+
 ## File Structure
 
 ```
@@ -46,6 +49,7 @@ This app was tested using Version 73.0.3683.75 of Google Chrome.
 
 
 <a name="why"/>
+
 ## The Why of it
 
 To, somewhat, quote Mythbusters "Why we Did what we did, and didn't do what we didn't do".
@@ -57,6 +61,7 @@ I decided that I had taken that repo a little too far. My original idea was to i
 
 
 <a name="issues"/>
+
 ## Known issues
 
 First and foremost: These classes are too tightly coupled for my taste. I realize this isn't really an "issue" but I had been hoping for better. Secondarily: You man find a "magic number" or two. Places that I had to adjust the area of effect or offset for a given graphic. The code comments expose these "adjustments" and make suggestions as to how to better deal with them if there was a future version.
