@@ -1,7 +1,8 @@
 class GameController {
-    constructor(player, enemies) {
+    constructor(player, enemies, blockGrid = null) {
         this.player = player;
         this.enemies = enemies;
+        this.blockGrid = blockGrid;
 
         // Game State
         this.isPaused = false;
@@ -21,12 +22,12 @@ class GameController {
     }
 
     handleInput(input) {
-        if (this.isPaused != true) {
+        if (this.isPaused == false) {
             let pos = this.checkNextMove();
-            // this.collisionCheck(enemy);
             switch (input) {
                 case 'up':
                     if (pos.yUp) {
+                        console.log('player move called');
                         this.player.moveUp(this.distMoveY);
                     }
                     break;
@@ -46,7 +47,7 @@ class GameController {
                     }
                     break;
                 case 'pause':
-                    this.isRunning = !(this.isRunning);
+                    this.isPaused = !isPaused;
             }
         }
 
@@ -54,10 +55,12 @@ class GameController {
 
     update(dt) {
         this.winCheck();
+        // TODO: use same method for blocks
         this.enemies.forEach(element => {
             this.collisionCheck(element);
             // element.update(dt);
-            if (element.x > this.gameAreaWidth || element.x < -5) {
+            if (element.x > ctx.canvas.width) {
+                console.log('reset called');
                 element.reset();
             }
             element.moveRight(10 * dt);
@@ -65,10 +68,11 @@ class GameController {
     }
 
     render() {
+        if (this.blockGrid != null) {
+            this.blockGrid.forEach(block => block.render());
+        }
         this.player.render();
-        this.enemies.forEach(function (enemy) {
-            enemy.render();
-        })
+        this.enemies.forEach(enemy => enemy.render());
     }
 
     checkNextMove(pos = this.player.getCurrentPosition()) {
@@ -92,6 +96,7 @@ class GameController {
         if (pos.y) {
             if ((pos.y - this.distMoveY) > (-1 * this.distMoveY)) {
                 returnObject.yUp = true;
+                console.log(true);
             }
         }
         // Check move down y
@@ -100,11 +105,36 @@ class GameController {
         if (pos.y) {
             if ((pos.y + this.distMoveY) < ctx.canvas.height - (2 * this.distMoveY)) {
                 returnObject.yDown = true;
-            } ``
+            }
         }
 
         return returnObject;
     }
+
+    // checkMoveBlocked(x, y) {
+    //     console.log(this.blockGrid);
+    //     this.blockGrid.forEach(block => {
+    //         let returnValue = false;
+    //         if (block.isPlayable == false) {
+    //             let xMin = block.x;
+    //             let xMax = block.x + this.distMoveX;
+    //             let yMin = block.y;
+    //             // TODO: fix code smell
+    //             let yMax = block.y + this.distMoveY - 18;
+    //             console.log(`x: ${x}, y: ${y}, xMin: ${xMin}, xMax: ${xMax}, yMin: ${yMin}, yMax: ${yMax}`)
+    //             if ((x > xMin == true) && (x < xMax == true) && (y > yMin == true) && (y < yMax == true)) {
+    //                 console.log('true');
+    //                 returnValue = true;
+    //             } else {
+    //                 console.log('false');
+    //                 returnValue = false;
+    //             }
+    //         } else {
+    //             console.log('false');
+    //             returnValue = false;
+    //         }
+    //     });
+    // }
 
     winCheck() {
         if (this.player.y < 0) {
@@ -143,7 +173,11 @@ let allEnemies = [
     new DynamicGamePiece('images/enemy-bug.png', 0, 144),
     new DynamicGamePiece('images/enemy-bug.png', 0, 224, 6)
 ]
-let gameController = new GameController(player, allEnemies);
+
+let gameBlockGrid = new GameBlockGrid(ctx.canvas.width, ctx.canvas.height, 5, 6, -18, 0);
+let allBlocks = gameBlockGrid.buildCustomBlockGrid(level1);
+console.log(allBlocks);
+let gameController = new GameController(player, allEnemies, allBlocks);
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
