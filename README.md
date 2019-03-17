@@ -24,7 +24,7 @@ This app was tested using Version 73.0.3683.75 of Google Chrome.
 
 
 <a name="file_structure"/>
-## File Structure
+##File Structure
 
 ```
 .
@@ -44,7 +44,7 @@ This app was tested using Version 73.0.3683.75 of Google Chrome.
 
 
 <a name="why"/>
-## The Why of it
+##The Why of it
 To, somewhat, quote Mythbusters "Why we Did what we did, and didn't do what we didn't do".
 The original game specifications weren't too difficult. I have not worked with javascript in many years and decided to
 see what kind of foundation I could build up using es6. I realize that es6 is mostly "syntactic sugar" but, isn't all code? Ignoring machine code of course.
@@ -54,5 +54,5 @@ I decided that I had taken that repo a little too far. My original idea was to i
 
 
 <a name="issues"/>
-## Known issues
+##Known issues
 First and foremost: These classes are too tightly coupled for my taste. I realize this isn't really an "issue" but I had been hoping for better. Secondarily: You man find a "magic number" or two. Places that I had to adjust the area of effect or offset for a given graphic. The code comments expose these "adjustments" and make suggestions as to how to better deal with them if there was a future version.
