@@ -61,9 +61,7 @@ class GameController {
             this.winCheck();
             this.enemies.forEach(element => {
                 this.collisionCheck(element);
-                // element.update(dt);
                 if (element.x > ctx.canvas.width) {
-                    console.log('reset called');
                     element.reset();
                 }
                 element.moveRight(10 * dt);
@@ -114,6 +112,7 @@ class GameController {
         return returnObject;
     }
 
+    // TODO: refactor / combine with collision check?
     checkMoveBlocked(player = this.player) {
         this.blockGrid.forEach(block => {
             let pos = player.getCurrentPosition();
@@ -123,7 +122,7 @@ class GameController {
                 let yMin = block.y - 30;
                 // TODO: fix code smell
                 let yMax = block.y + 50;
-                console.log(`x: ${pos.x}, y: ${pos.y}, xMin: ${xMin}, xMax: ${xMax}, yMin: ${yMin}, yMax: ${yMax}`);
+                // console.log(`x: ${pos.x}, y: ${pos.y}, xMin: ${xMin}, xMax: ${xMax}, yMin: ${yMin}, yMax: ${yMax}`);
                 if ((pos.x > xMin) && (pos.x < xMax) && (pos.y > yMin) && (pos.y < yMax)) {
                     player.returnToLastPos();
                 }
@@ -139,12 +138,14 @@ class GameController {
         }
     }
 
+    // TODO: Why not use this for blocks as well?
+    // Use arguments for diff min, max, and callback?
     collisionCheck(item, player = this.player) {
         // TODO: make arguments dynamic
-        let itemMinX = item.x - 10;
+        let itemMinX = item.x - 50;
         let itemMaxX = item.x + 80;
         let itemMinY = item.y - 10;
-        let itemMaxY = item.y + 80;
+        let itemMaxY = item.y + 40;
         if (player.x < itemMaxX && player.x > itemMinX && player.y < itemMaxY && player.y > itemMinY) {
             this.updateScore(-10);
             this.reset();
@@ -171,7 +172,6 @@ let allEnemies = [
 
 let gameBlockGrid = new GameBlockGrid(ctx.canvas.width, ctx.canvas.height, 5, 6, -18, 0);
 let allBlocks = gameBlockGrid.buildCustomBlockGrid(level1);
-console.log(allBlocks);
 let gameController = new GameController(player, allEnemies, allBlocks);
 
 // This listens for key presses and sends the keys to your

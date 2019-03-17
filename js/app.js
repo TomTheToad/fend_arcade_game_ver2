@@ -135,7 +135,6 @@ class DynamicGamePiece extends GamePiece {
     }
 
     returnToLastPos() {
-        console.log("returnToLastPos called");
         if (this.previousPos) {
             this.x = this.previousPos.x
             this.y = this.previousPos.y
