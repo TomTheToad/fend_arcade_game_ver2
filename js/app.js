@@ -93,22 +93,27 @@ class DynamicGamePiece extends GamePiece {
         this.xMoveModifier = xMoveModifier;
         this.originX = x;
         this.originY = y;
+        this.previousPos = { x: this.x, y: this.y };
     }
 
     // TODO: keep howFar? Allow for easily changing move distance in an instance.
     moveUp(howFar) {
+        this.setLastPos();
         this.y -= howFar;
     }
 
     moveDown(howFar) {
+        this.setLastPos();
         this.y += howFar;
     }
 
     moveRight(howFar) {
+        this.setLastPos();
         this.x += howFar * this.xMoveModifier;
     }
 
     moveLeft(howFar) {
+        this.setLastPos();
         this.x -= howFar * this.xMoveModifier;
     }
 
@@ -123,5 +128,17 @@ class DynamicGamePiece extends GamePiece {
     reset() {
         this.x = this.originX;
         this.y = this.originY;
+    }
+
+    setLastPos() {
+        this.previousPos = this.getCurrentPosition();
+    }
+
+    returnToLastPos() {
+        console.log("returnToLastPos called");
+        if (this.previousPos) {
+            this.x = this.previousPos.x
+            this.y = this.previousPos.y
+        }
     }
 }

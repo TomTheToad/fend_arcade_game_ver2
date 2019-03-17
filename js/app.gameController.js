@@ -27,44 +27,48 @@ class GameController {
             switch (input) {
                 case 'up':
                     if (pos.yUp) {
-                        console.log('player move called');
                         this.player.moveUp(this.distMoveY);
+                        this.checkMoveBlocked();
                     }
                     break;
                 case 'down':
                     if (pos.yDown) {
                         this.player.moveDown(this.distMoveY);
+                        this.checkMoveBlocked();
                     }
                     break;
                 case 'right':
                     if (pos.xRight) {
                         this.player.moveRight(this.distMoveX);
+                        this.checkMoveBlocked();
                     }
                     break;
                 case 'left':
                     if (pos.xLeft) {
                         this.player.moveLeft(this.distMoveX);
+                        this.checkMoveBlocked();
                     }
                     break;
-                case 'pause':
-                    this.isPaused = !isPaused;
             }
         }
-
+        if (input == 'pause') {
+            this.isPaused = !this.isPaused;
+        }
     }
 
     update(dt) {
-        this.winCheck();
-        // TODO: use same method for blocks
-        this.enemies.forEach(element => {
-            this.collisionCheck(element);
-            // element.update(dt);
-            if (element.x > ctx.canvas.width) {
-                console.log('reset called');
-                element.reset();
-            }
-            element.moveRight(10 * dt);
-        });
+        if (this.isPaused != true) {
+            this.winCheck();
+            this.enemies.forEach(element => {
+                this.collisionCheck(element);
+                // element.update(dt);
+                if (element.x > ctx.canvas.width) {
+                    console.log('reset called');
+                    element.reset();
+                }
+                element.moveRight(10 * dt);
+            });
+        }
     }
 
     render() {
@@ -96,7 +100,6 @@ class GameController {
         if (pos.y) {
             if ((pos.y - this.distMoveY) > (-1 * this.distMoveY)) {
                 returnObject.yUp = true;
-                console.log(true);
             }
         }
         // Check move down y
@@ -111,30 +114,22 @@ class GameController {
         return returnObject;
     }
 
-    // checkMoveBlocked(x, y) {
-    //     console.log(this.blockGrid);
-    //     this.blockGrid.forEach(block => {
-    //         let returnValue = false;
-    //         if (block.isPlayable == false) {
-    //             let xMin = block.x;
-    //             let xMax = block.x + this.distMoveX;
-    //             let yMin = block.y;
-    //             // TODO: fix code smell
-    //             let yMax = block.y + this.distMoveY - 18;
-    //             console.log(`x: ${x}, y: ${y}, xMin: ${xMin}, xMax: ${xMax}, yMin: ${yMin}, yMax: ${yMax}`)
-    //             if ((x > xMin == true) && (x < xMax == true) && (y > yMin == true) && (y < yMax == true)) {
-    //                 console.log('true');
-    //                 returnValue = true;
-    //             } else {
-    //                 console.log('false');
-    //                 returnValue = false;
-    //             }
-    //         } else {
-    //             console.log('false');
-    //             returnValue = false;
-    //         }
-    //     });
-    // }
+    checkMoveBlocked(player = this.player) {
+        this.blockGrid.forEach(block => {
+            let pos = player.getCurrentPosition();
+            if (block.isPlayable == false) {
+                let xMin = block.x - 5;
+                let xMax = block.x + 50;
+                let yMin = block.y - 30;
+                // TODO: fix code smell
+                let yMax = block.y + 50;
+                console.log(`x: ${pos.x}, y: ${pos.y}, xMin: ${xMin}, xMax: ${xMax}, yMin: ${yMin}, yMax: ${yMax}`);
+                if ((pos.x > xMin) && (pos.x < xMax) && (pos.y > yMin) && (pos.y < yMax)) {
+                    player.returnToLastPos();
+                }
+            }
+        });
+    }
 
     winCheck() {
         if (this.player.y < 0) {
@@ -186,7 +181,8 @@ document.addEventListener('keyup', function (e) {
         37: 'left',
         38: 'up',
         39: 'right',
-        40: 'down'
+        40: 'down',
+        80: 'pause'
     };
 
     gameController.handleInput(allowedKeys[e.keyCode]);
