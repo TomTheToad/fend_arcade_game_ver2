@@ -4,9 +4,7 @@
 // Included eventlistener logic for necessary keys to operate game at bottom.
 // This file is where most of the game logic should be kept.
 
-// Model for GameController class
-// Could be moved to models files but kept here to make it easier for code review
-// and because it contains most of the game logic.
+// GameController class
 // Takes three arguments.
 // player: the player game piece
 // enemies: an array of enemy game pieces
